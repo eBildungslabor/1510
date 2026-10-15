@@ -1,0 +1,287 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>KI in der Bildung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: one full-screen slide at a time, generous whitespace, one accent for "currently in focus" */
+:root{
+  --bg:#fbfbf9;
+  --ink:#1b1f22;
+  --muted:#7b8286;
+  --line:#dfe2e2;
+  --accent:#0f6e6a;
+  --accent-soft:#e1efed;
+  --display:"Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --body:"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121516; --ink:#ebeeee; --muted:#8b9395; --line:#2a2f31;
+    --accent:#5cc2b9; --accent-soft:#183331; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121516; --ink:#ebeeee; --muted:#8b9395; --line:#2a2f31;
+  --accent:#5cc2b9; --accent-soft:#183331; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;
+  -webkit-tap-highlight-color:transparent;user-select:none}
+.deck{position:relative;height:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding-block:clamp(24px,6vh,72px);
+  padding-left:max(clamp(16px,7vw,120px), env(safe-area-inset-left,0px));
+  padding-right:max(clamp(16px,7vw,120px), env(safe-area-inset-right,0px));
+  opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.slide.active{opacity:1;visibility:visible}
+.eyebrow{font-size:clamp(11px,1.1vw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 1.2em}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.015em}
+h1{font-size:clamp(34px,6.2vw,92px);line-height:1.02;max-width:14ch}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:clamp(16px,1.8vw,24px);color:var(--muted);margin:1.4em 0 0;max-width:40ch;line-height:1.45}
+
+/* two-sided slide */
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,48px);align-items:stretch}
+.side{border:1.5px solid var(--line);border-radius:4px;padding:clamp(18px,3vw,44px);
+  display:flex;flex-direction:column;gap:1em;min-width:0;transition:all .4s ease}
+.side .k{font-family:var(--display);font-size:clamp(13px,1.3vw,16px);color:var(--muted);font-weight:600}
+.side h2{font-size:clamp(20px,2.7vw,40px);line-height:1.15}
+.sides.focus-l .side.l,.sides.focus-r .side.r{border-color:var(--accent);background:var(--accent-soft)}
+.sides.focus-l .side.l .k,.sides.focus-r .side.r .k{color:var(--accent)}
+.sides.focus-l .side.r,.sides.focus-r .side.l{opacity:.32}
+.sides.compact .side{padding:clamp(12px,1.6vw,22px)}
+.sides.compact h2{font-size:clamp(14px,1.5vw,20px)}
+
+/* content list on focus slides */
+.focus-wrap{display:flex;flex-direction:column;gap:clamp(20px,4.5vh,48px)}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(14px,3vh,30px)}
+.points li{display:grid;grid-template-columns:clamp(28px,3vw,44px) 1fr;gap:.6em;align-items:baseline}
+.points .n{font-family:var(--display);font-weight:700;color:var(--accent);font-size:clamp(18px,2vw,28px)}
+.points .t{font-family:var(--display);font-size:clamp(20px,2.6vw,38px);line-height:1.2;font-weight:500;min-width:0}
+.points .t small{display:block;font-family:var(--body);font-size:clamp(14px,1.3vw,18px);color:var(--muted);margin-top:.35em;font-weight:400;line-height:1.45}
+.chips{display:flex;flex-wrap:wrap;gap:.5em;margin-top:.7em}
+.chip{font-family:var(--body);font-size:clamp(13px,1.25vw,17px);border:1.5px solid var(--accent);color:var(--accent);
+  padding:.35em .8em;border-radius:999px;font-weight:500}
+.statement{font-family:var(--display);font-size:clamp(20px,2.6vw,36px);line-height:1.25;border-left:3px solid var(--accent);padding-left:.8em;max-width:30ch}
+.statement .lbl{display:block;font-family:var(--body);font-size:clamp(11px,1vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.5em}
+
+/* fragments */
+.frag{opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease}
+.frag.shown{opacity:1;transform:none}
+
+/* golden circle */
+.gc-row{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(20px,5vw,80px);align-items:center}
+.gc-row.solo{grid-template-columns:1fr;justify-items:center}
+.gc{width:100%;max-width:min(64vh,520px);aspect-ratio:1;max-height:100%}
+.gc svg{width:100%;height:100%;display:block}
+.gc circle{fill:var(--bg);stroke:var(--line);stroke-width:2;transition:fill .5s,stroke .5s}
+.gc text{font-family:var(--display);font-weight:600;fill:var(--muted);text-anchor:middle;dominant-baseline:middle;transition:fill .5s}
+.gc .on circle{fill:var(--accent-soft);stroke:var(--accent)}
+.gc .on text{fill:var(--accent)}
+.gc .center.on circle{fill:var(--accent)}
+.gc .center.on text{fill:var(--bg)}
+.trio{display:flex;flex-direction:column;gap:clamp(20px,5vh,48px)}
+.slide > .trio .s{font-size:clamp(28px,4.4vw,64px)}
+.murmel{font-size:clamp(30px,5vw,72px);line-height:1.08;max-width:18ch}
+.trio div{display:flex;flex-direction:column;gap:.25em}
+.trio .w{font-size:clamp(11px,1vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.trio .s{font-family:var(--display);font-size:clamp(22px,3vw,44px);line-height:1.12;font-weight:500}
+.trio b{color:var(--accent);font-weight:600}
+
+/* chrome */
+.bar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-top:12px;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  font-size:12px;color:var(--muted);pointer-events:none}
+.bar button{pointer-events:auto;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;
+  width:34px;height:34px;font:inherit;font-size:15px;cursor:pointer}
+.bar button:hover{color:var(--ink);border-color:var(--muted)}
+.bar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav{display:flex;gap:8px;align-items:center}
+.count{font-variant-numeric:tabular-nums;min-width:4.5em;text-align:center}
+.progress{position:fixed;left:0;top:0;height:3px;background:var(--accent);transition:width .4s ease;top:env(safe-area-inset-top,0px)}
+
+@media (max-width:700px){
+  .sides{grid-template-columns:1fr}
+  .gc-row{grid-template-columns:1fr}
+  .gc{max-width:min(38vh,320px);justify-self:center}
+}
+@media (prefers-reduced-motion:reduce){
+  .slide,.frag,.side,.gc circle,.gc text,.progress{transition:none}
+}
+</style>
+
+<div class="progress" id="progress"></div>
+<main class="deck" id="deck">
+
+  <!-- 1 Titel -->
+  <section class="slide">
+    <p class="eyebrow">Orientierung</p>
+    <h1>KI in der Bildung, <em>von zwei Seiten</em> betrachtet</h1>
+    <p class="sub">Lernförderliche Nutzung und pädagogische Verantwortung</p>
+  </section>
+
+  <!-- 2 Zwei Seiten -->
+  <section class="slide">
+    <div class="sides">
+      <div class="side l"><h2>Was ist KI und wie nutze ich KI lernförderlich?</h2></div>
+      <div class="side r"><h2>Was ist meine pädagogische Verantwortung im Kontext von KI?</h2></div>
+    </div>
+  </section>
+
+  <!-- 3 Seite 1: Thesen -->
+  <section class="slide">
+    <div class="focus-wrap">
+      <div class="sides focus-l compact">
+        <div class="side l"><h2>Was ist KI und wie nutze ich KI lernförderlich?</h2></div>
+        <div class="side r"><h2>Was ist meine pädagogische Verantwortung im Kontext von KI?</h2></div>
+      </div>
+      <ul class="points">
+        <li class="frag"><span class="n">1</span><span class="t">KI ist Technik, nicht Magie.</span></li>
+        <li class="frag"><span class="n">2</span><span class="t">Als Resonanzmaschine ist KI lernförderlicher denn als Antwortmaschine.</span></li>
+        <li class="frag"><span class="n">3</span><span class="t">Sinnvoll ist eine kontraintuitive Nutzung.
+          <span class="chips">
+            <span class="chip">Fragen statt Antworten</span>
+            <span class="chip">Perspektiven wahrnehmen</span>
+            <span class="chip">Widerspruch einfordern</span>
+            <span class="chip">Erst selbst denken</span>
+            <span class="chip">KI als Sparringspartner</span>
+          </span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 Golden Circle: Wie + Was -->
+  <section class="slide">
+    <div class="gc-row solo">
+      <div class="gc" data-on="how,what"></div>
+    </div>
+  </section>
+
+  <!-- 5 Lernen ist Pflicht ... -->
+  <section class="slide">
+    <div class="trio">
+      <div class="frag"><span class="s"><b>Lernen</b> ist Pflicht.</span></div>
+      <div class="frag"><span class="s"><b>Pädagogik</b> vermittelt Inhalte.</span></div>
+      <div class="frag"><span class="s"><b>Bildung</b> bereitet auf die Zukunft vor.</span></div>
+    </div>
+  </section>
+
+  <!-- Murmelphase -->
+  <section class="slide">
+    <p class="eyebrow">Murmelphase</p>
+    <h2 class="murmel">Wie erlebst du KI-Nutzung in deinem Kontext?</h2>
+  </section>
+
+  <!-- 6 Seite 2: Verantwortung -->
+  <section class="slide">
+    <div class="focus-wrap">
+      <div class="sides focus-r compact">
+        <div class="side l"><h2>Was ist KI und wie nutze ich KI lernförderlich?</h2></div>
+        <div class="side r"><h2>Was ist meine pädagogische Verantwortung im Kontext von KI?</h2></div>
+      </div>
+      <ul class="points">
+        <li class="frag"><span class="n">1</span><span class="t">Was bedeutet KI für mich, für andere und für die Welt?</span></li>
+        <li class="frag"><span class="n">2</span><span class="t">Welche Muster sind in die Technologie eingeschrieben, und welche Konsequenzen hat das?</span></li>
+        <li class="frag"><span class="n">3</span><span class="t">Welche Alternativen gibt es?</span></li>
+      </ul>
+      <p class="statement frag"><span class="lbl">Pädagogische Verantwortung</span>Pädagogik ermöglicht Entwicklungs-, Reflexions- und Gestaltungsräume.</p>
+    </div>
+  </section>
+
+  <!-- 7 Golden Circle: Wozu -->
+  <section class="slide">
+    <div class="gc-row solo">
+      <div class="gc" data-on="why"></div>
+    </div>
+  </section>
+
+  <!-- 9 Menschen wollen lernen ... -->
+  <section class="slide">
+    <div class="trio">
+      <div class="frag"><span class="s"><b>Menschen</b> wollen lernen.</span></div>
+      <div class="frag"><span class="s"><b>Pädagogik</b> hilft bei der Entfaltung.</span></div>
+      <div class="frag"><span class="s"><b>Bildung</b> ermächtigt zur Gestaltung guter Zukünfte.</span></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="bar">
+  <span>KI in der Bildung</span>
+  <div class="nav">
+    <button id="prev" aria-label="Zurück">←</button>
+    <span class="count" id="count"></span>
+    <button id="next" aria-label="Weiter">→</button>
+    <button id="fs" aria-label="Vollbild">⤢</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Golden Circle SVG
+  const gcSVG = on => {
+    const has = k => on.includes(k) ? ' on' : '';
+    return `<svg viewBox="0 0 400 400" role="img" aria-label="Golden Circle: Wozu, Wie, Was">
+      <g class="ring what${has('what')}"><circle cx="200" cy="200" r="194"/><text x="200" y="38" font-size="24">Was?</text></g>
+      <g class="ring how${has('how')}"><circle cx="200" cy="200" r="136"/><text x="200" y="96" font-size="24">Wie?</text></g>
+      <g class="center${has('why')}"><circle cx="200" cy="200" r="72"/><text x="200" y="202" font-size="28">Wozu?</text></g>
+    </svg>`;
+  };
+  document.querySelectorAll('.gc').forEach(el => el.innerHTML = gcSVG(el.dataset.on.split(',')));
+
+  const slides = [...document.querySelectorAll('.slide')];
+  let s = 0, f = 0;
+  const frags = i => [...slides[i].querySelectorAll('.frag')];
+  const count = document.getElementById('count'), progress = document.getElementById('progress');
+
+  function render(){
+    slides.forEach((el,i) => el.classList.toggle('active', i===s));
+    frags(s).forEach((el,i) => el.classList.toggle('shown', i < f));
+    count.textContent = (s+1) + ' / ' + slides.length;
+    progress.style.width = ((s+1)/slides.length*100) + '%';
+    try{ history.replaceState(null,'','#f'+(s+1)); }catch(e){}
+  }
+  function next(){
+    if (f < frags(s).length) { f++; }
+    else if (s < slides.length-1) { s++; f = 0; }
+    render();
+  }
+  function prev(){
+    if (f > 0) { f--; }
+    else if (s > 0) { s--; f = frags(s).length; }
+    render();
+  }
+  document.getElementById('next').onclick = e => { e.stopPropagation(); next(); };
+  document.getElementById('prev').onclick = e => { e.stopPropagation(); prev(); };
+  document.getElementById('fs').onclick = e => {
+    e.stopPropagation();
+    try{
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen().catch(()=>{});
+    }catch(err){}
+  };
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    if (['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { s = 0; f = 0; render(); }
+    if (e.key === 'End') { s = slides.length-1; f = frags(s).length; render(); }
+  });
+  document.getElementById('deck').addEventListener('click', e => {
+    (e.clientX < window.innerWidth * 0.25) ? prev() : next();
+  });
+  let x0 = null;
+  document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+  });
+  const m = /^#f(\d+)$/.exec(location.hash);
+  if (m) { s = Math.min(slides.length-1, Math.max(0, +m[1]-1)); }
+  render();
+})();
+</script>
+
+</body></html>
